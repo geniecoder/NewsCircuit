@@ -4,6 +4,8 @@ import { roundToNearestPixel } from 'react-native/Libraries/Utilities/PixelRatio
 import Card from '../components/Card';
 import CHeader from '../components/CHeader';
 import { GetApiRequest } from '../utilities/apicall';
+import Login from '../screens/Login';
+import {AuthContext, user, logout } from '../components/AuthProvider';
 
 
 class Home extends Component {
@@ -42,12 +44,24 @@ class Home extends Component {
     if (this.state.isLoading) {
       return (
         this.loadingView()
+
       );
     } else {
-      return (
+     return (
         <View >
+         
           <View>
           <CHeader Tname={this.props.route.name}/>
+          <View>
+            <Text> Welcome {this.user.uid} </Text>
+          </View>
+          <TouchableOpacity
+                        style={styles.submitButton}
+                        onPress={
+                            () => this.logout()
+                        }>
+                        <Text style={styles.submitButtonText}> Submit </Text>
+                    </TouchableOpacity>
           </View>
  
           <View style={styles.container}>

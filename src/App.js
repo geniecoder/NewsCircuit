@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useContext} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -21,14 +21,27 @@ import MyTabs from './components/MyTabs';
 import ScreenStack from './components/ScreenStack'; 
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from "react-native-push-notification";
+import auth from '@react-native-firebase/auth';
+import {AuthContext} from './components/AuthProvider';
 
+class App extends React.Component{
+  constructor(props){
+    super();
+    this.state = {
+      user: '',
+      initializing: 'true'
+    }
+    this.onAuthStateChanged = this.onAuthStateChanged.bind(this);
+  }
 
-class App extends React.Component
-{
-
+   onAuthStateChanged(user) {
+    this.setState(user);
+    if(this.state.initializing) this.setState({initializing: 'false'});
+  }
 
   componentDidMount(){
-    this.checkPermission()
+    this.checkPermission();
+     const subscriber = auth().onAuthStateChanged(this.onAuthStateChanged);
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
       onRegister: function (token) {
@@ -67,6 +80,7 @@ class App extends React.Component
       popInitialNotification: true, 
       requestPermissions: true,
     });
+    return subscriber;
   }
 
 // Remote Notification permissions request
@@ -116,6 +130,7 @@ async requestPermission(){
 
 
   render(){
+    //if(this.state.initializing) return null;
     return (
       <NavigationContainer>
         <ScreenStack/>
